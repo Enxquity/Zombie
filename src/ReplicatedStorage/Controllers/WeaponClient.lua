@@ -1118,7 +1118,6 @@ function WeaponClient:KnitInit()
         end
     end) --// Client game loop
 
-    print("Test")
     print("[Knit Client] Weapon System initialised!")
 end
 
