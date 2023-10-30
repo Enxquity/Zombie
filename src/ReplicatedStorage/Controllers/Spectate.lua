@@ -6,6 +6,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local Spectate = Knit.CreateController {
     Name = "Spectate";
     CurrentSpectating = nil;
+    IsSpectating = false;
 
     Services = {
         ["SpectateService"] = 0;
@@ -32,6 +33,7 @@ local Spectate = Knit.CreateController {
 ]]
 
 function Spectate:StartSpectate()
+    self.IsSpectating = true
     self.CurrentSpectating = Players:GetPlayers()[1]
     RunService:BindToRenderStep("ClientSpectate", 1, function()
         local Coordinates = self.Services.SpectateService:GetCoordinates(self.CurrentSpectating)
@@ -42,6 +44,26 @@ function Spectate:StartSpectate()
             end
         end
     end)
+end
+
+function Spectate:Next()
+    assert(self.IsSpectating, "Not currently in spectate!")
+    local SpectateList = Players:GetPlayers()
+    local CurrentIndex = table.find(SpectateList, self.CurrentSpectating)
+
+    if CurrentIndex then
+        self.CurrentSpectating = SpectateList[(CurrentIndex + 1) > #SpectateList and 1 or CurrentIndex + 1]
+    end
+end
+
+function Spectate:Back()
+    assert(self.IsSpectating, "Not currently in spectate!")
+    local SpectateList = Players:GetPlayers()
+    local CurrentIndex = table.find(SpectateList, self.CurrentSpectating)
+
+    if CurrentIndex then
+        self.CurrentSpectating = SpectateList[(CurrentIndex - 1) < 1 and #SpectateList or CurrentIndex - 1]
+    end
 end
 
 function Spectate:KnitStart()
