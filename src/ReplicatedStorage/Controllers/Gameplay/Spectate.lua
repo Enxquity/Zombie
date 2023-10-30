@@ -30,6 +30,30 @@ local Spectate = Knit.CreateController {
     Once again this will be improved on but i am currently coding from a MacBook therefore unable to test it and hope everything
     just works correctly!
 
+    ====================
+
+    Client's task:
+    
+    Create a loop to make a request to the server really often
+    Wait for the return of the server's request to the spectatee's client and back (more info in the SpectateService script)
+    The data returned from the spectatee comes in this form {PartName = PartCFrame;}
+    Use this data to change each part in our current clients viewmodel so that it's the same as spectatee's viewmodel
+
+    ====================
+
+    Undone currently:
+
+    - Need to make it so that the gun also replicates, have a plan currently this is what im thinking
+            - Check if the client's viewmodel has a gun
+                - If yes, then check if the name of the clients gun and spectatee's gun is the same
+                    - If yes then replicate the cframes from the spectatee's viewmodel data                    <-----------------^
+                    - If no, delete the current client gun, find the new one in RepStorage.GameAssets.Weapons and clone it in ->|
+                - If no then copy the same gun as the spectatee has from GameAssets and then use the viewmodel data
+    
+    - Need to see if animations replicate (i believe they should replicate with CFrame, but not sure)
+    - Need to pass through camera CFrame data aswell so that camera shake & etc.. also replicate
+    - Need to pass through UI data aswell
+    - Need to make sure it is also performant as alot of remote event calls will be made (like alotttttt)
 ]]
 
 function Spectate:StartSpectate()
