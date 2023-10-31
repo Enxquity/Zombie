@@ -17,6 +17,8 @@ local SpectateService = Knit.CreateService {
     Redirect that request to the person that is being spectated
     Wait for the return of viewmodel data from the spectatee's client
     Redirect that data back to the spectator
+
+    This server is essentially the middleman between the two clients.
 ]]
 
 function SpectateService.Client:GetCoordinates(PlayerCalling, PlayerSpectating)

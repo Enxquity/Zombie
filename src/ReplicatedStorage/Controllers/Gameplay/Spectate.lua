@@ -62,11 +62,31 @@ function Spectate:StartSpectate()
     RunService:BindToRenderStep("ClientSpectate", 1, function()
         local Coordinates = self.Services.SpectateService:GetCoordinates(self.CurrentSpectating)
         local Viewmodel = workspace.CurrentCamera:FindFirstChild("Viewmodel")
+
+        local Gun = Coordinates["Gun"]
+        local CurrentGun = Viewmodel:FindFirstChildWhichIsA("Model")
+
         if Viewmodel and #Coordinates > 0 then
             for Key, Value in pairs(Coordinates) do
                 Viewmodel[Key].CFrame = Value 
             end
+            if Gun and CurrentGun and Gun["Name"] == CurrentGun.Name then
+                CurrentGun:PivotTo(Gun["CFrame"])
+                table.foreach(Gun["Stats"], function(Key, Value)
+                    CurrentGun.Values[Key].Value = Value
+                end)
+            else
+                local GunExists = ReplicatedStorage.GameAssets.Weapons:FindFirstChild(Gun["Name"])
+                if GunExists then
+                    local NewGun = GunExists:Clone()
+                    NewGun.Parent = Viewmodel
+                end
+            end
+
+            workspace.CurrentCamera.CFrame = Coordinates["Camera"]
         end
+
+        print("Processed spectate step:", Coordinates)
     end)
 end
 
@@ -106,6 +126,19 @@ function Spectate:KnitInit()
             for i,v in pairs(Viewmodel:GetChildren()) do
                 if v:IsA("BasePart") then
                     ViewmodelDataArr[v.Name] = v.CFrame
+                end
+                ViewmodelDataArr["Camera"] = workspace.CurrentCamera.CFrame
+
+                local Gun = Viewmodel:FindFirstChildWhichIsA("Model")
+                if Gun then
+                    ViewmodelDataArr["Gun"] = {}
+                    ViewmodelDataArr["Gun"]["Name"] = Gun.Name
+                    ViewmodelDataArr["Gun"]["CFrame"] = Gun:GetPivot()
+                    ViewmodelDataArr["Gun"]["Stats"] = {}
+
+                    table.foreach(Gun.Values:GetDescendants(), function(Key, Value)
+                        ViewmodelDataArr["Gun"]["Stats"][Value.Name] = Value.Value 
+                    end)
                 end
             end
         end
