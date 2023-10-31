@@ -25,6 +25,9 @@ local WeaponClient = Knit.CreateController{
         ["PointsService"] = 0;
         ["Gameplay"] = 0;
     };
+    Controllers = {
+        ["Spectate"] = 0
+    };
     Interfaces = {};
 
     Camera = workspace.CurrentCamera;
@@ -686,7 +689,12 @@ function WeaponClient:MakeConnection()
     end)
 
     RunService:BindToRenderStep("Viewmodel", 301, function(DT)
-        if Player:GetAttributes()["Dead"] then return end
+        if Player:GetAttributes()["Dead"] then
+            self.Controllers["Spectate"]:StartSpectate()
+            return 
+        else
+            self.Controllers["Spectate"]:StopSpectate()
+        end
         UserInputService.MouseIconEnabled = false
         local Rot = self.Camera.CFrame:ToObjectSpace(self.CacheValues.LastCF)
         local X, Y, Z = Rot:ToOrientation()
@@ -931,6 +939,9 @@ end
 function WeaponClient:KnitInit()
     for i,v in pairs(self.Services) do
         self.Services[i] = Knit.GetService(i)
+    end
+    for i,v in pairs(self.Controllers) do
+        self.Controllers[i] = Knit.GetController(i)
     end
 
     -- UI

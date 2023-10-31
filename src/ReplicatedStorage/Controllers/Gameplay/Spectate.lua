@@ -57,6 +57,7 @@ local Spectate = Knit.CreateController {
 ]]
 
 function Spectate:StartSpectate()
+    if self.IsSpectating then return end
     self.IsSpectating = true
     self.CurrentSpectating = Players:GetPlayers()[1]
     RunService:BindToRenderStep("ClientSpectate", 1, function()
@@ -88,6 +89,12 @@ function Spectate:StartSpectate()
 
         print("Processed spectate step:", Coordinates)
     end)
+end
+
+function Spectate:StopSpectate()
+    if self.IsSpectating == false then return end
+    RunService:UnbindFromRenderStep("ClientSpectate")
+    self.IsSpectating = false
 end
 
 function Spectate:Next()
