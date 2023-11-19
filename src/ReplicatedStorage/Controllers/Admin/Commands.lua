@@ -51,6 +51,7 @@ return {{
                         if Char and Char:FindFirstChild("Humanoid") then
                             Char:FindFirstChild("Humanoid").Health = 0
                         end
+                        Args[1]:SetAttribute("Dead", true)
                     end
                 ]], Args
             )

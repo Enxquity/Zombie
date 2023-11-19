@@ -4,8 +4,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local SpectateService = Knit.CreateService {
     Name = "SpectateService",
     Client = {
-        Signals = {
-            GetViewmodelCoordinates = Knit.CreateSignal();
+        GetViewmodelCoordinates = Knit.CreateSignal();
     },
 }
 
@@ -25,7 +24,9 @@ function SpectateService.Client:GetCoordinates(PlayerCalling, PlayerSpectating)
 end
 
 function SpectateService:GetCoordinates(PlayerSpectating)
-    return self.Client.Signals.GetViewmodelCoordinates:Fire(PlayerSpectating)
+    local Coords = self.Client.GetViewmodelCoordinates:Fire(PlayerSpectating)
+    warn(Coords)
+    return Coords
 end
 
 function SpectateService:KnitStart()

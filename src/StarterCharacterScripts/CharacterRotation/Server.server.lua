@@ -1,4 +1,4 @@
-local Event = script.Parent:WaitForChild('LookEvent')
+local Event = script.Parent:WaitForChild('LookEvent', 20)
 local Ang = CFrame.Angles
 local aSin = math.asin
 local aTan = math.atan

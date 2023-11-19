@@ -690,6 +690,7 @@ function WeaponClient:MakeConnection()
 
     RunService:BindToRenderStep("Viewmodel", 301, function(DT)
         if Player:GetAttributes()["Dead"] then
+            print("Spectating")
             self.Controllers["Spectate"]:StartSpectate()
             return 
         else
@@ -820,7 +821,7 @@ function WeaponClient:MakeConnection()
             )
             self.Camera.CFrame *= CFrame.Angles(RecoilSpring.Position.Y/4 , 0, RecoilSpring.Position.X)
             self.Camera.CFrame *= CFrame.Angles(RecoilCounterSpring.Position.Y/4, 0, RecoilCounterSpring.Position.X)
-            if self:IsDowned() and self.Instances["ClientGun"] then
+            if self:IsDowned() and self.Instances["ClientGun"] and self.Instances["ClientGun"]:FindFirstChild("Values") then
                 local X, Y, Z = self.Camera.CFrame:ToOrientation()
                 local newX = math.clamp(math.deg(X), 0, 80)
                 self.Camera.CFrame = CFrame.new(self.Camera.CFrame.Position) * CFrame.fromOrientation(math.rad(newX), Y, Z)

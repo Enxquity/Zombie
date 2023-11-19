@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local GameplayClient = Knit.CreateController { 
@@ -10,6 +11,7 @@ local GameplayClient = Knit.CreateController {
     };
     Controllers = {
         ["Prompt"] = 0;
+        ["Spectate"] = 0;
     }
 }
 
@@ -86,6 +88,22 @@ function GameplayClient:KnitInit()
         end;
         ForceHeldTarget = true;
     }
+
+    UserInputService.InputBegan:Connect(function(Input, IsTyping)
+        if 
+            IsTyping 
+            or 
+            self.Controllers["Spectate"].IsSpectating == false 
+        then 
+            return 
+        end
+
+        if Input.KeyCode == Enum.KeyCode.Q then
+            self.Controllers["Spectate"]:Back()
+        elseif Input.KeyCode == Enum.KeyCode.E then
+            self.Controllers["Spectate"]:Next()
+        end
+    end)
 
     print("[Knit Client] Gameplay initialised!")
 end

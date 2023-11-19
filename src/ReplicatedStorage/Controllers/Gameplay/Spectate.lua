@@ -61,9 +61,10 @@ function Spectate:StartSpectate()
     self.IsSpectating = true
     self.CurrentSpectating = Players:GetPlayers()[1]
     RunService:BindToRenderStep("ClientSpectate", 1, function()
-        local Coordinates = self.Services.SpectateService:GetCoordinates(self.CurrentSpectating)
+        local Async, Coordinates = self.Services.SpectateService:GetCoordinates(self.CurrentSpectating):await()
         local Viewmodel = workspace.CurrentCamera:FindFirstChild("Viewmodel")
 
+        if not Coordinates or not Coordinates["Gun"] then return end
         local Gun = Coordinates["Gun"]
         local CurrentGun = Viewmodel:FindFirstChildWhichIsA("Model")
 
@@ -125,7 +126,7 @@ function Spectate:KnitInit()
     for Service, _ in pairs(self.Services) do
         self.Services[Service] = Knit.GetService(Service)
     end
-    self.Services.SpectateService.Signals.GetViewmodelCoordinates:Connect(function()
+    self.Services.SpectateService.GetViewmodelCoordinates:Connect(function()
         local ViewmodelDataArr = {}
         local Viewmodel = workspace.CurrentCamera:FindFirstChild("Viewmodel")
 
@@ -150,6 +151,7 @@ function Spectate:KnitInit()
             end
         end
 
+        warn(ViewmodelDataArr)
         return ViewmodelDataArr
     end)
     
