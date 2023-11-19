@@ -6,7 +6,6 @@ local SpectateService = Knit.CreateService {
     Client = {
         Signals = {
             GetViewmodelCoordinates = Knit.CreateSignal();
-        }
     },
 }
 
