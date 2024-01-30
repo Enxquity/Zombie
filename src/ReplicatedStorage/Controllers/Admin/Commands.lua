@@ -96,7 +96,6 @@ return {{
         end
     }
 }, {
-    gun = ConvertInstanceToList(ReplicatedStorage.GameAssets.Weapons:GetChildren());
     powerup = {
         "Nuke";
         "InstaKill";

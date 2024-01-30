@@ -1,28 +1,36 @@
 local GuiService = game:GetService("GuiService")
 local Keybinds = {
-    ["Crouch"] = {
-        ["PC"] = Enum.KeyCode.LeftControl;
-        ["Xbox"] = Enum.KeyCode.Thumbstick2;
+    ["Cancel"] = {
+        ["PC"] = Enum.KeyCode.Q;
+        ["Console"] = Enum.KeyCode.DPadLeft;
     };
-    ["Senses"] = {
-        ["PC"] = Enum.KeyCode.LeftControl;
-        ["Xbox"] = Enum.KeyCode.ButtonX;
+    ["Rotate"] = {
+        ["PC"] = Enum.KeyCode.R;
+        ["Console"] = Enum.KeyCode.ButtonY;
     };
-    ["Aim"] = {
-        ["PC"] = Enum.UserInputType.MouseButton2;
-        ["Xbox"] = Enum.KeyCode.ButtonL2;
+    ["Build"] = {
+        ["PC"] = Enum.KeyCode.One;
+        ["Console"] = Enum.KeyCode.DPadUp;
     };
-    ["Fire"] = {
-        ["PC"] = Enum.UserInputType.MouseButton1;
-        ["Xbox"] = Enum.KeyCode.ButtonR2;
-    }
+    ["Delete"] = {
+        ["PC"] = Enum.KeyCode.Two;
+        ["Console"] = Enum.KeyCode.DPadRight;
+    };
+    ["Pipe"] = {
+        ["PC"] = Enum.KeyCode.Three;
+        ["Console"] = Enum.KeyCode.DPadUp;
+    };
+    ["Cable"] = {
+        ["PC"] = Enum.KeyCode.Four;
+        ["Console"] = Enum.KeyCode.DPadDown;
+    };
 }
 
 local IndexTable = {}
 IndexTable.__index = function(self, index)
     if Keybinds[index] then
-        if GuiService:IsTenFootInterface() == true then --// Xbox user
-            return Keybinds[index].Xbox
+        if GuiService:IsTenFootInterface() == true then --// Console user
+            return Keybinds[index].Console
         else --// Else is pc or mobile (however mobile is bad and we DO NOT CARE)
             return Keybinds[index].PC
         end
