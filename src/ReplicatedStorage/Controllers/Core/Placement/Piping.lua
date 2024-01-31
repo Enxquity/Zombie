@@ -64,6 +64,10 @@ function Piping.clear_boxes()
     Piping.IndependentCache = {}
 end
 
+function Piping.disable()
+    Piping.Enabled = false
+end
+
 function Piping.toggle(Library)
     Piping.Enabled = not Piping.Enabled
 
@@ -123,6 +127,7 @@ function Piping.toggle(Library)
     end
 
     while Piping.Enabled == true do
+        Piping.Mouse.TargetFilter = workspace.Arrows
         local Target = Piping.Mouse.Target
         if not Target then task.wait() continue end
         Target = Target.Parent

@@ -22,6 +22,7 @@ Knit.Start():andThen(function()
             UI:Call("Build", "toggle")
         end
         if Input.KeyCode == Keybinds.Pipe then
+            Placement:Stop()
             Placement:Call("Piping", "toggle")
         end
         if Input.KeyCode == Keybinds.Cancel then

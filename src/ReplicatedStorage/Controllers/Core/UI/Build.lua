@@ -17,6 +17,7 @@ local Build = {
 
                 NewTemplate.MouseButton1Click:Connect(function()
                     local Controller = Knit.GetController("Placement")
+                    Controller:Call("Piping", "disable")
                     Controller:Start(Buildable)
                 end)
             end
