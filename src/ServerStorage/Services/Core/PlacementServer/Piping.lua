@@ -30,7 +30,10 @@ function Piping:GetConnections(Pipe)
     for _, Connector in pairs(Pipe:GetChildren()) do
         if Connector.Name:find("Connector") then
             local Connection = Piping:FindDirectPipe(Connector)
-            table.insert(Connections, Connection)
+
+            if Connection and Connection.Name:find("Connector") then
+                table.insert(Connections, Connection)
+            end
         end
     end
     return Connections
@@ -63,6 +66,10 @@ function Piping:Connect(PipeA, PipeB)
                 if Connect.Value == nil then
                     Connect.Value = Connection
                     break
+                else
+                    if #PipeA.PipeInfo.Connections:GetChildren() <= 1 then
+                        Connect.Value = Connection
+                    end
                 end
             end
             return true
