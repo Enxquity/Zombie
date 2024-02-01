@@ -9,7 +9,7 @@ local Build = {
         local Template = UI:FindFirstChild("Template")
 
         for _, Buildable in pairs(ReplicatedStorage.Game.Buildables:GetDescendants()) do
-            if Buildable:IsA("Model") then
+            if Buildable:IsA("Model") and Buildable.Parent:IsA("Folder") then
                 local NewTemplate = Template:Clone()
                 NewTemplate.Parent = UI
                 NewTemplate.Visible = true

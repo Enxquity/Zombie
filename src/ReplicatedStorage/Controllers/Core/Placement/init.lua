@@ -107,14 +107,16 @@ function Placement:Start(Item)
     Box.Transparency = 0.6
 
     while self.Placement == true do
+        self.Mouse.TargetFilter = NewItem
         local MousePosition = self.Mouse.Hit.Position
         local RoundedPosition = Vector3.new(
             math.round(MousePosition.X / self.Settings.SnapX) * self.Settings.SnapX, 
-            0, 
+            NewItem:GetExtentsSize().Y/2, 
             math.round(MousePosition.Z / self.Settings.SnapZ) * self.Settings.SnapZ
         )
 
-        NewItem:PivotTo(CFrame.new(RoundedPosition) * CFrame.Angles(0, self.Settings.Rotation, 0) + Vector3.new(0, NewItem:GetBoundingBox().Y, 0))
+        print(RoundedPosition)
+        NewItem:PivotTo(CFrame.new(RoundedPosition) * CFrame.Angles(0, self.Settings.Rotation, 0))
 
         for i,v in pairs(NewItem:GetChildren()) do
             if v.Name == "Direction" then
