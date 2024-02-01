@@ -111,12 +111,13 @@ function Placement:Start(Item)
         local MousePosition = self.Mouse.Hit.Position
         local RoundedPosition = Vector3.new(
             math.round(MousePosition.X / self.Settings.SnapX) * self.Settings.SnapX, 
-            NewItem:GetExtentsSize().Y/2, 
+            NewItem.PrimaryPart.Size.Y/2,
+            --0,
             math.round(MousePosition.Z / self.Settings.SnapZ) * self.Settings.SnapZ
         )
 
         print(RoundedPosition)
-        NewItem:PivotTo(CFrame.new(RoundedPosition) * CFrame.Angles(0, self.Settings.Rotation, 0))
+        NewItem:SetPrimaryPartCFrame(CFrame.new(RoundedPosition) * CFrame.Angles(0, self.Settings.Rotation, 0))
 
         for i,v in pairs(NewItem:GetChildren()) do
             if v.Name == "Direction" then

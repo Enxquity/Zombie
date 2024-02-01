@@ -6,8 +6,13 @@ function Piping:FindDirectPipe(Connector)
     local ConnectorCF = Connector.CFrame
     local Left, Right, Back, Front = -ConnectorCF.RightVector, ConnectorCF.RightVector, -ConnectorCF.LookVector, ConnectorCF.LookVector
 
+    local FilterList = {Connector.Parent, workspace.Debris}
+    for _, Pipe in pairs(CollectionService:GetTagged("Pipe")) do
+        table.insert(FilterList, Pipe.PrimaryPart)
+    end
+
     local Params = RaycastParams.new()
-    Params.FilterDescendantsInstances = {Connector.Parent, workspace.Debris}
+    Params.FilterDescendantsInstances = FilterList
     Params.FilterType = Enum.RaycastFilterType.Exclude
 
     local RayLeft, RayRight, RayBack, RayFront = workspace:Raycast(Connector.Position, Left, Params), workspace:Raycast(Connector.Position, Right, Params), workspace:Raycast(Connector.Position, Back, Params), workspace:Raycast(Connector.Position, Front, Params)

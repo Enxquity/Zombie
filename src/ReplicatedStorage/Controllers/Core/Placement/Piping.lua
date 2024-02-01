@@ -27,7 +27,7 @@ function Piping.update_arrows(Library)
         local Arrows = {}
         for _, Connection in pairs(Pipe.PipeInfo.Connections:GetChildren()) do
             if Connection.Value ~= nil then
-                local Arrow = Library:Arrow((Pipe:GetPivot() + Vector3.new(0, Pipe:GetExtentsSize().Y/2, 0)).Position, Connection.Value.Position + (Vector3.yAxis * Pipe:GetExtentsSize().Y/2), Color3.fromRGB(123, 154, 255))
+                local Arrow = Library:Arrow((Pipe:GetPivot() + Vector3.new(0, Pipe:GetExtentsSize().Y/2, 0)).Position, (Connection.Value.Parent:GetPivot() + (Vector3.yAxis * Pipe:GetExtentsSize().Y/2)).Position, Color3.fromRGB(123, 154, 255))
                 table.insert(Arrows, Arrow)
             end
         end
