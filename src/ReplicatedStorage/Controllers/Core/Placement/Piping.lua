@@ -91,12 +91,21 @@ function Piping.toggle(Library)
 
                     Library:ServiceCall("PlacementServer", "GetConnections", Target.Parent):andThen(function(Connections)
                         table.foreach(Connections, function(a, b)
-                            local Box = Library:SelectionBox(b.Parent)
-                            Box.Color3 = Color3.fromRGB(118, 230, 151)
-                            Box.SurfaceColor3 = Color3.fromRGB(118, 230, 151)
-                            Box.LineThickness = 0.025
-                            Box.SurfaceTransparency = 0.85
-                            table.insert(Piping.IndependentCache, Box)
+                            if b.Parent.Parent:HasTag("Connectable") and not b.Parent.Parent:HasTag("HasInput") then
+                                print("Can't connect here")
+                            else
+                                local Box = Library:SelectionBox(b.Parent)
+                                Box.Color3 = Color3.fromRGB(118, 230, 151)
+                                Box.SurfaceColor3 = Color3.fromRGB(118, 230, 151)
+                                Box.LineThickness = 0.025
+                                Box.SurfaceTransparency = 0.85
+    
+                                if b.Parent.Name == "Solid" then
+                                    Box.Adornee = b.Parent.Parent
+                                end
+
+                                table.insert(Piping.IndependentCache, Box)
+                            end
                         end)
                     end)
                 else
@@ -117,10 +126,29 @@ function Piping.toggle(Library)
                     Piping.Blacklist = {}
                     Piping.IndependentCache = {}
 
-                    Library:ServiceCall("PlacementServer", "Connect", PipeA, PipeB):andThen(function(Result)
-                        print("The result of the pipe connection was:", Result)
-                        Piping.update_arrows(Library)
-                    end)
+                    if PipeA:HasTag("Connectable") then
+                        print("Machine")
+                        local PipeC = nil
+                        Library:ServiceCall("PlacementServer", "GetConnections", PipeB):andThen(function(Connections)
+                            if Connections[1] then
+                                PipeC = Connections[1].Parent
+                            end
+                        end):await()
+
+                        Library:ServiceCall("PlacementServer", "GetConnections", PipeC):andThen(function(Connections)
+                            warn(Connections)
+                        end)
+
+                        Library:ServiceCall("PlacementServer", "Connect", PipeC, PipeB):andThen(function(Result)
+                            print("The result of the pipe connection was:", Result)
+                            Piping.update_arrows(Library)
+                        end)
+                    else
+                        Library:ServiceCall("PlacementServer", "Connect", PipeA, PipeB):andThen(function(Result)
+                            print("The result of the pipe connection was:", Result)
+                            Piping.update_arrows(Library)
+                        end)
+                    end
                 end
             end
         end)
@@ -131,7 +159,11 @@ function Piping.toggle(Library)
         local Target = Piping.Mouse.Target
         if not Target then task.wait() continue end
         Target = Target.Parent
-        if CollectionService:HasTag(Target, "Pipe") then
+        if CollectionService:HasTag(Target, "Pipe") or CollectionService:HasTag(Target, "Connectable") then
+            if #Piping.Blacklist ~= 0 and CollectionService:HasTag(Target, "Connectable") and not CollectionService:HasTag(Target, "HasInput") then
+                task.wait()
+                continue
+            end
             if not Target:FindFirstChild("Select") and not table.find(Piping.Blacklist, Target) then
                 table.foreach(Piping.BoxCache, function(_, Box)
                     Box:Destroy()

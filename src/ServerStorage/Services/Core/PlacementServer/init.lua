@@ -35,7 +35,7 @@ function PlacementServer:Place(Item, CFrame)
             end
         end
         local Connection = Piping:FindDirectPipe(NewItem.FrontConnector)
-        if Connection and Connection.Name ~= "FrontConnector" and Connection.Name:find("Connector") then
+        if Connection and Connection.Name ~= "FrontConnector" and Connection.Name:find("Connector") and not Connection:HasTag("Output") then
             for _, Connect in pairs(NewItem.PipeInfo.Connections:GetChildren()) do
                 Connect.Value = Connection
                break

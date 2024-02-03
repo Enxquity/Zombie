@@ -116,7 +116,6 @@ function Placement:Start(Item)
             math.round(MousePosition.Z / self.Settings.SnapZ) * self.Settings.SnapZ
         )
 
-        print(RoundedPosition)
         NewItem:SetPrimaryPartCFrame(CFrame.new(RoundedPosition) * CFrame.Angles(0, self.Settings.Rotation, 0))
 
         for i,v in pairs(NewItem:GetChildren()) do

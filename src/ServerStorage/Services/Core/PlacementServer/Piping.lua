@@ -34,6 +34,7 @@ function Piping:GetConnections(Pipe)
     local Connections = {}
     for _, Connector in pairs(Pipe:GetChildren()) do
         if Connector.Name:find("Connector") then
+            print("Finding direct pipe")
             local Connection = Piping:FindDirectPipe(Connector)
 
             if Connection and Connection.Name:find("Connector") then
