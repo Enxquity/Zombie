@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Knit = require(ReplicatedStorage.Packages.Knit)
+local Serializer = require(ReplicatedStorage.Source.Serializer)
 
 local Piping = {
     Enabled = false;
@@ -25,10 +26,19 @@ function Piping.update_arrows(Library)
     Piping.clear_arrows()
     for _, Pipe in pairs(CollectionService:GetTagged("Pipe")) do
         local Arrows = {}
-        for _, Connection in pairs(Pipe.PipeInfo.Connections:GetChildren()) do
-            if Connection.Value ~= nil then
-                local Arrow = Library:Arrow((Pipe:GetPivot() + Vector3.new(0, Pipe:GetExtentsSize().Y/2, 0)).Position, (Connection.Value.Parent:GetPivot() + (Vector3.yAxis * Pipe:GetExtentsSize().Y/2)).Position, Color3.fromRGB(123, 154, 255))
-                table.insert(Arrows, Arrow)
+        if not Pipe.Parent:HasTag("Connectable") then
+            for _, Connection in pairs(Pipe.PipeInfo.Connections:GetChildren()) do
+                if Connection.Value ~= nil then
+                    local Arrow = Library:Arrow((Pipe:GetPivot() + Vector3.new(0, Pipe:GetExtentsSize().Y/2, 0)).Position, (Connection.Value.Parent:GetPivot() + (Vector3.yAxis * Pipe:GetExtentsSize().Y/2)).Position, Color3.fromRGB(123, 154, 255))
+                    table.insert(Arrows, Arrow)
+                end
+            end
+        else
+            for _, Connection in pairs(Pipe.PipeInfo.Connections:GetChildren()) do
+                if Connection.Value ~= nil then
+                    local Arrow = Library:Arrow((Pipe:GetPivot() + Vector3.new(0, Connection.Value.Parent:GetExtentsSize().Y/2, 0)).Position, (Connection.Value.Parent:GetPivot() + (Vector3.yAxis * Connection.Value.Parent:GetExtentsSize().Y/2)).Position, Color3.fromRGB(123, 154, 255), true)
+                    table.insert(Arrows, Arrow)
+                end
             end
         end
         if #Arrows > 1 then
@@ -36,7 +46,6 @@ function Piping.update_arrows(Library)
                 for _, ArrowB in pairs(Arrows) do
                     print(ArrowB.CFrame.LookVector:Dot(ArrowA.CFrame.LookVector))
                     if ArrowB.CFrame.LookVector:Dot(ArrowA.CFrame.LookVector) <= -0.99 then
-                        print("We got opposite arrows")
                         local NewSize = Vector3.new(ArrowA.Size.X, ArrowA.Size.Y, ArrowA.Size.Z/1.25)
                         ArrowA.Size = NewSize
                         ArrowB.Size = NewSize
@@ -127,19 +136,17 @@ function Piping.toggle(Library)
                     Piping.IndependentCache = {}
 
                     if PipeA:HasTag("Connectable") then
-                        print("Machine")
-                        local PipeC = nil
-                        Library:ServiceCall("PlacementServer", "GetConnections", PipeB):andThen(function(Connections)
-                            if Connections[1] then
-                                PipeC = Connections[1].Parent
+                        Library:ServiceCall("PlacementServer", "GetConnections", PipeA, true):andThen(function(Connections)
+                            local Deserialized = Serializer.Deserialize(Connections)
+                            for Connector, Connection in pairs(Deserialized) do
+                                if Connection.Parent == PipeB then
+                                    PipeA = Connector.Parent
+                                    return
+                                end
                             end
                         end):await()
 
-                        Library:ServiceCall("PlacementServer", "GetConnections", PipeC):andThen(function(Connections)
-                            warn(Connections)
-                        end)
-
-                        Library:ServiceCall("PlacementServer", "Connect", PipeC, PipeB):andThen(function(Result)
+                        Library:ServiceCall("PlacementServer", "Connect", PipeA, PipeB):andThen(function(Result)
                             print("The result of the pipe connection was:", Result)
                             Piping.update_arrows(Library)
                         end)
@@ -164,7 +171,7 @@ function Piping.toggle(Library)
                 task.wait()
                 continue
             end
-            if not Target:FindFirstChild("Select") and not table.find(Piping.Blacklist, Target) then
+            if not Target:FindFirstChild("Select") and not table.find(Piping.Blacklist, Target) and not Target:HasTag("Machine") then
                 table.foreach(Piping.BoxCache, function(_, Box)
                     Box:Destroy()
                 end)

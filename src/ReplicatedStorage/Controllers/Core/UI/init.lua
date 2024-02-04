@@ -28,7 +28,9 @@ function UI:KnitStart()
             local r = require(v)
             self.UI[v.Name] = r
 
-            r.init(self)
+            task.spawn(function()
+                r.init(self)
+            end)
         end
     end
 end

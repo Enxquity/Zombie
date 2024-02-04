@@ -20,7 +20,7 @@ local Keybinds = {
         ["PC"] = Enum.KeyCode.Three;
         ["Console"] = Enum.KeyCode.DPadUp;
     };
-    ["Cable"] = {
+    ["Power"] = {
         ["PC"] = Enum.KeyCode.Four;
         ["Console"] = Enum.KeyCode.DPadDown;
     };

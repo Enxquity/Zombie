@@ -4,6 +4,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 
 --// Interclasses
 local Piping = require(script.Piping)
+local Power = require(script.Power)
 
 local PlacementServer = Knit.CreateService {
     Name = "PlacementServer",
@@ -18,8 +19,12 @@ function PlacementServer.Client:Connect(Player, PipeA, PipeB)
     return self.Server:Connect(PipeA, PipeB)
 end
 
-function PlacementServer.Client:GetConnections(Player, Pipe)
-    return Piping:GetConnections(Pipe)
+function PlacementServer.Client:ConnectPower(Player, BoxA, BoxB)
+    return self.Server:ConnectPower(BoxA, BoxB)
+end
+
+function PlacementServer.Client:GetConnections(Player, Pipe, Serialize)
+    return Piping:GetConnections(Pipe, Serialize)
 end
 
 function PlacementServer:Place(Item, CFrame)
@@ -48,6 +53,10 @@ end
 
 function PlacementServer:Connect(PipeA, PipeB)
     return Piping:Connect(PipeA, PipeB)
+end
+
+function PlacementServer:ConnectPower(BoxA, BoxB)
+    return Power:Connect(BoxA, BoxB)
 end
 
 function PlacementServer:KnitStart()

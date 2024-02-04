@@ -10,7 +10,7 @@ local Placement = Knit.CreateController {
     Modules = {};
     Services = {
         ["PlacementServer"] = "None";
-    };   
+    };  
 
     Settings = {
         SnapX = 2;
@@ -70,15 +70,66 @@ function Placement:Hitbox(Item)
     return NewHitbox
 end
 
-function Placement:Arrow(From, To, Color)
+function Placement:Arrow(From, To, Color, Machine)
     local NewArrow = workspace.Arrow:Clone()
     NewArrow.Parent = workspace.Arrows
 
-    local ArrowOrigin = CFrame.new(From)
+    local ArrowOrigin = nil
+    if not Machine then
+        ArrowOrigin = CFrame.new(From)
+    else
+        ArrowOrigin = CFrame.new(From) + (To-From).Unit * 0.2
+    end
     NewArrow.CFrame = CFrame.lookAt(ArrowOrigin.Position, To)
     NewArrow.Color = Color
 
     return NewArrow
+end
+
+function Placement:Cylinder(From, To, Adornee, Color)
+    --[[local NewCylinder = Instance.new("CylinderHandleAdornment")
+    NewCylinder.Parent = workspace:FindFirstChild("Connections")
+    NewCylinder.Adornee = Adornee
+    NewCylinder.Color3 = Color
+    NewCylinder.Radius = 0.075
+
+    local Dist = (From - To).Magnitude
+    local P1CF = CFrame.new(From)
+    local LCF = CFrame.new(From, To)
+
+    local CF = P1CF:ToObjectSpace(LCF + LCF.LookVector * Dist/2)
+
+    local P1 = Instance.new("Part", workspace.Debris)
+    P1.Anchored = true
+    P1.Size = Vector3.new(1, 1, 1)
+    P1.Position = From
+    
+    local P2 = Instance.new("Part", workspace.Debris)
+    P2.Anchored = true
+    P2.Size = Vector3.new(1, 1, 1)
+    P2.CFrame = (LCF + LCF.LookVector * Dist)
+    P2.Color = Color3.new(0, 0, 0)
+
+    NewCylinder.Height = Dist
+    NewCylinder.CFrame = CF
+
+    return NewCylinder--]] -- Have to scrap almost 2 hours of work im so sad
+
+    local NewCylinder = Instance.new("Part")
+    NewCylinder.Parent = workspace:FindFirstChild("Connections")
+    NewCylinder.Shape = Enum.PartType.Cylinder
+    NewCylinder.Color = Color
+    NewCylinder.Material = Enum.Material.SmoothPlastic
+    NewCylinder.Anchored = true
+    NewCylinder.CanCollide = false
+
+    local Dist = (From-To).Magnitude
+    local CF = CFrame.new(From, To)
+
+    NewCylinder.CFrame = CF * CFrame.Angles(0, math.pi/2, 0) + CF.LookVector * Dist/2
+    NewCylinder.Size = Vector3.new(Dist, 0.2, 0.2)
+
+    return NewCylinder
 end
 
 function Placement:Rotate()
@@ -124,8 +175,15 @@ function Placement:Start(Item)
             end
         end
 
+        local ItemList = {}
+        for i,v in pairs(Item:GetDescendants()) do
+            if v:IsA("BasePart") then
+                table.insert(ItemList, v)
+            end
+        end
+
         local Event = HitBox.Touched:Connect(function() end)
-        if #HitBox:GetTouchingParts() > #Item:GetChildren() then
+        if #HitBox:GetTouchingParts() > #ItemList then
             Box.Color3 = Color3.fromRGB(255, 0, 0)
         else
             Box.Color3 = Color3.fromRGB(97, 185, 112)
