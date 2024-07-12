@@ -19,7 +19,7 @@ local Admin = Knit.CreateController {
 
 -- Function to create tweens
 function Admin:CreateTween(Instance, TInfo, TweenData, NewList)
-    -- If NewList is not provided, add the tween to self.Tweens, otherwise add it to NewList
+    -- If NewList is not provided, add the tween to self.Tweens, otherwise add it to NewList (im aware this is a bad way to do this but the issue came up later in the development)
     if not NewList then
         self.Tweens[#self.Tweens+1] = TweenService:Create(Instance, TInfo, TweenData)
         self.Tweens[#self.Tweens]:Play()
